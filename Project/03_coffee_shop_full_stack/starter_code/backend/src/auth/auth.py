@@ -3,20 +3,17 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+
 from dotenv import load_dotenv
 import os
 load_dotenv()
 
+#REMOVE - in .env file
 #AUTH0_DOMAIN = 'dev-icyd3s7p2aeojxvf.us.auth0.com'
 #ALGORITHMS = ['RS256']
 #API_AUDIENCE = 'udacity-test'
 #CLIENT_ID = 'gJpszpl55Dl0opM5lrco5bmsCdRLjHTd'
-=======
 
-
-AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
 
 ## AuthError Exception
 '''
@@ -31,14 +28,6 @@ class AuthError(Exception):
 
 ## Auth Header
 
-'''
-@TODO implement get_token_auth_header() method
-    it should attempt to get the header from the request
-        it should raise an AuthError if no header is present
-    it should attempt to split bearer and the token
-        it should raise an AuthError if the header is malformed
-    return the token part of the header
-'''
 def get_token_auth_header():
     auth = request.headers.get('Authorization', None)
 
@@ -49,11 +38,13 @@ def get_token_auth_header():
         }, 401)
 
     token = auth.split()
+
     if token[0] != 'Bearer':
         raise AuthError({
             'code': 'invalid-header',
             'description': 'Bearer missing from Authorization'
         }, 401)
+
     if len(token) <= 1 or len(token) > 2:
         raise AuthError({
             'code': 'invalid-header',
@@ -61,22 +52,26 @@ def get_token_auth_header():
         }, 401)
 
     return token[1]
-=======
-   raise Exception('Not Implemented')
 
 '''
-@TODO implement check_permissions(permission, payload) method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
-
-    it should raise an AuthError if permissions are not included in the payload
-        !!NOTE check your RBAC settings in Auth0
-    it should raise an AuthError if the requested permission string is not in the payload permissions array
-    return true otherwise
+@INPUTS
+    permission: string permission (i.e. 'post:drink')
+    payload: decoded jwt payload
 '''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    if 'permissions' not in payload:
+        raise AuthError({
+            'code': 'invalid_claims',
+            'description': 'No permissions in token'
+            }, 400)
+
+    if permission not in payload['permissions']:
+        raise AuthError({
+            'code': 'unauthorized',
+            'description': 'Unauthorized attempt'
+            }, 403)
+
+    return True
 
 '''
 @TODO implement verify_decode_jwt(token) method
