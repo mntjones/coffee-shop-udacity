@@ -3,6 +3,7 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+<<<<<<< HEAD
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -11,6 +12,13 @@ load_dotenv()
 #ALGORITHMS = ['RS256']
 #API_AUDIENCE = 'udacity-test'
 #CLIENT_ID = 'gJpszpl55Dl0opM5lrco5bmsCdRLjHTd'
+=======
+
+
+AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
+ALGORITHMS = ['RS256']
+API_AUDIENCE = 'dev'
+>>>>>>> b68bf3f5aae93acbc57c76813cd8ff736a43520c
 
 ## AuthError Exception
 '''
@@ -34,6 +42,7 @@ class AuthError(Exception):
     return the token part of the header
 '''
 def get_token_auth_header():
+<<<<<<< HEAD
     auth = request.headers.get('Authorization', None)
 
     if auth is None:
@@ -55,6 +64,9 @@ def get_token_auth_header():
         }, 401)
 
     return token[1]
+=======
+   raise Exception('Not Implemented')
+>>>>>>> b68bf3f5aae93acbc57c76813cd8ff736a43520c
 
 '''
 @TODO implement check_permissions(permission, payload) method
