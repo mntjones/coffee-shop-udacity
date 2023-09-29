@@ -37,7 +37,7 @@ def get_token_auth_header():
         raise AuthError({
             'code': 'authorization_header_missing',
             'description': 'No Authorization header found'
-        }, 401)
+        }), 401
 
 
     #splits authorization into parts - should be 2
@@ -48,14 +48,14 @@ def get_token_auth_header():
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Bearer missing from Authorization'
-        }, 401)
+        }), 401
 
     # check for correct length of authorization
     if len(token) <= 1 or len(token) > 2:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization format incorrect'
-        }, 401)
+        }), 401
 
     # returns token part of header
     return token[1]
@@ -72,14 +72,14 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'invalid_claims',
             'description': 'No permissions in token'
-            }, 400)
+            }), 400
 
     # checks if requested permission string in the payload
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found'
-            }, 403)
+            }), 403
 
     return True
 
@@ -152,26 +152,26 @@ def verify_decode_jwt(token):
             raise AuthError({
                 'code': 'token_expired',
                 'description': 'Token expired'
-            }, 401)
+            }), 401
 
         except jwt.JWTClaimsError:
 
             raise AuthError({
                 'code': 'invalid_claims',
                 'description': 'Invalid claims'
-            }, 401)
+            }), 401
 
         except Exception:
 
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Invalid token information'
-            }, 401)
+            }), 401
 
     raise AuthError({
         'code':'invalid_header',
         'description': 'No key to decode'
-        }, 400)
+        }), 400
 
 '''
     @INPUTS
