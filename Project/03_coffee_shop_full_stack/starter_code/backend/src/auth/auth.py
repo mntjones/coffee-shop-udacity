@@ -9,10 +9,10 @@ import os
 load_dotenv()
 
 #REMOVE - in .env file
-#AUTH0_DOMAIN = 'dev-icyd3s7p2aeojxvf.us.auth0.com'
-#ALGORITHMS = ['RS256']
-#API_AUDIENCE = 'udacity-test'
-#CLIENT_ID = 'gJpszpl55Dl0opM5lrco5bmsCdRLjHTd'
+AUTH0_DOMAIN = 'dev-xdrh4efh06zfn7ch.us.auth0.com'
+ALGORITHMS = ['RS256']
+API_AUDIENCE = 'udacity-test'
+CLIENT_ID = 'AxP76dlPMRuJUZjihzfs9gl6PqMUDlOe'
 
 
 ## AuthError Exception
@@ -37,25 +37,25 @@ def get_token_auth_header():
         raise AuthError({
             'code': 'authorization_header_missing',
             'description': 'No Authorization header found'
-        }), 401
+        }, 401)
 
 
     #splits authorization into parts - should be 2
-    token = auth.split()
+    token = auth.split(' ')
 
     # checks for 'Bearer' in the beginning of authorization
     if token[0] != 'Bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Bearer missing from Authorization'
-        }), 401
+        }, 401)
 
     # check for correct length of authorization
-    if len(token) <= 1 or len(token) > 2:
+    if len(token) != 2:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization format incorrect'
-        }), 401
+        }, 401)
 
     # returns token part of header
     return token[1]
@@ -72,14 +72,14 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'invalid_claims',
             'description': 'No permissions in token'
-            }), 400
+            }, 400)
 
     # checks if requested permission string in the payload
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found'
-            }), 403
+            }, 403)
 
     return True
 
@@ -110,7 +110,7 @@ def verify_decode_jwt(token):
     url = urlopen(f'https://{AUTO0_DOMAIN}/.well-known/jwks.json')
 
     #load json
-    jwt_json = json.loads(url.read())
+    jwt_json = json.loads(jsonurl.read())
 
     #get header
     header_unv = jwt.get_unverified_header(token)
@@ -126,7 +126,6 @@ def verify_decode_jwt(token):
     for key in jwkw['keys']:
         if key['kid'] == header_unv['kid']:
             rsa_key = {
-                'alg': key['alg']
                 'kty': key['kty'],
                 'kid': key['kid'],
                 'use': key['use'],
@@ -146,32 +145,33 @@ def verify_decode_jwt(token):
             )
 
             return payload
-
+            
+        #errors
         except jwt.ExpiredSignatureError:
 
             raise AuthError({
                 'code': 'token_expired',
                 'description': 'Token expired'
-            }), 401
+            }, 401)
 
         except jwt.JWTClaimsError:
 
             raise AuthError({
                 'code': 'invalid_claims',
                 'description': 'Invalid claims'
-            }), 401
+            }, 401)
 
         except Exception:
 
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Invalid token information'
-            }), 401
+            }, 401)
 
     raise AuthError({
         'code':'invalid_header',
         'description': 'No key to decode'
-        }), 400
+        }, 400)
 
 '''
     @INPUTS
